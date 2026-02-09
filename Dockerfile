@@ -87,8 +87,20 @@ RUN bb ci
 # ENTRYPOINT [ "/bin/hello.sh" ]
 ####################
 
-# TODO: create non-privileged user that the app will run under (see above)
 FROM eclipse-temurin:25 AS final
+
+# TODO: create non-privileged user that the app will run under (see above)
+ARG UID=10001
+RUN adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/nonexistent" \
+    --shell "/sbin/nologin" \
+    --no-create-home \
+    --uid "${UID}" \
+    appuser
+
+USER appuser
 
 RUN mkdir /opt/app
 COPY --from=build /build/target/net.clojars.jsm13/mynewapp-0.1.0-SNAPSHOT.jar /opt/app/
