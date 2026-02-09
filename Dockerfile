@@ -108,3 +108,5 @@ COPY --from=build /build/target/net.clojars.jsm13/mynewapp-0.1.0-SNAPSHOT.jar /o
 CMD ["java", "-jar", "/opt/app/mynewapp-0.1.0-SNAPSHOT.jar"]
 
 # TODO: https://hub.docker.com/_/eclipse-temurin#creating-a-jre-using-jlink
+# TODO: https://practical.li/engineering-playbook/continuous-integration/docker/clojure-multi-stage-dockerfile/#entrypoint 
+# https://github.com/Yelp/dumb-init
