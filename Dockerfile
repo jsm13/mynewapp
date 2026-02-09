@@ -51,8 +51,7 @@ RUN clojure -P -X:build
 
 # Copy project files to the builder working directory
 COPY ./ /build/
-# TODO: use bb ci task
-RUN clojure -T:build uber
+RUN bb ci
 
 ################################################################################
 # Create a final stage for running your application.
