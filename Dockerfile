@@ -51,8 +51,8 @@ RUN clojure -P -X:build
 
 # Copy project files to the builder working directory
 COPY ./ /build/
-# TODO: use bb task
-RUN clojure -T:project/build uberjar
+# TODO: use bb ci task
+RUN clojure -T:build uber
 
 ################################################################################
 # Create a final stage for running your application.
@@ -88,7 +88,8 @@ RUN clojure -T:project/build uberjar
 # ENTRYPOINT [ "/bin/hello.sh" ]
 ####################
 
-FROM eclipse-temurin:25
+# TODO: create non-privileged user that the app will run under (see above)
+FROM eclipse-temurin:25 AS final
 
 RUN mkdir /opt/app
 COPY --from=build /build/target/net.clojars.jsm13/mynewapp-0.1.0-SNAPSHOT.jar /opt/app/
