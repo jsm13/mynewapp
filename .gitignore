@@ -4,6 +4,7 @@
 .clj-kondo/.cache
 .cpcache
 .eastwood
+.env
 .factorypath
 .hg/
 .hgignore

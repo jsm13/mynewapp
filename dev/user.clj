@@ -1,7 +1,8 @@
 (ns user
   (:require [hikari-cp.core :as hc]
             [next.jdbc :as jdbc]
-            [next.jdbc.connection :as connection]))
+            [next.jdbc.connection :as connection])
+  (:import (io.github.cdimascio.dotenv Dotenv)))
 
 (def datasource-options {:adapter "postgresql"
                          :database-name "postgres"
@@ -16,7 +17,15 @@
   [datasource]
   (hc/close-datasource datasource))
 
+(defn start-env
+  []
+  (Dotenv/load))
 
 (comment
-  (def db (start-db))
-  (stop-db db))
+  (start-env)
+  (with-open [pool (start-db)
+              ds (jdbc/get-connection pool)]
+    (hc/close-datasource pool)
+    (let [rows (jdbc/execute! ds ["SELECT 1 + 1"])]
+      (println rows)))
+  )
