@@ -18,6 +18,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  flyway:
+    image: flyway/flyway:12
+    command: migrate
+    volumes:
+      - ./db/migrations:/flyway/sql
+      - ./db/flyway.conf:/flyway/conf/flyway.conf
 volumes:
   db-data:
 secrets:

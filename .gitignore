@@ -29,3 +29,4 @@
 /classes
 /target
 /db/password.txt
+/db/flyway.conf

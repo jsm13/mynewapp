@@ -24,8 +24,7 @@
 (comment
   (start-env)
   (with-open [pool (start-db)
-              ds (jdbc/get-connection pool)]
-    (hc/close-datasource pool)
-    (let [rows (jdbc/execute! ds ["SELECT 1 + 1"])]
+              ds (jdbc/get-connection pool)] 
+    (let [rows (jdbc/execute! ds ["SELECT 1 + 3"])]
       (println rows)))
   )
