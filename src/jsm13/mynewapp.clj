@@ -1,4 +1,5 @@
 (ns jsm13.mynewapp
+  (:require [jsm13.system :as system])
   (:gen-class))
 
 (defn greet
@@ -9,7 +10,10 @@
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  (greet {:name (first args)}))
+  (let [running-system (system/start-system args)]
+    (.addShutdownHook
+     (Runtime/getRuntime)
+     (new Thread #(system/stop-system running-system)))))
 
 (comment
-  (greet {:name "jsm"}))
+  )

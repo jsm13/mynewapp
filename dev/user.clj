@@ -1,30 +1,16 @@
 (ns user
-  (:require [hikari-cp.core :as hc]
+  (:require [integrant.core :as ig]
+            [integrant.repl :as ig-repl]
+            [integrant.repl.state :as ig-state]
             [next.jdbc :as jdbc]
-            [next.jdbc.connection :as connection])
-  (:import (io.github.cdimascio.dotenv Dotenv)))
+            [jsm13.system :as system])
+  (:import (com.zaxxer.hikari HikariDataSource)))
 
-(def datasource-options {:adapter "postgresql"
-                         :database-name "postgres"
-                         :username "postgres"
-                         :password "postgres"})
-
-(defn start-db
-  []
-  (connection/->pool 'hikari-cp datasource-options))
-
-(defn stop-db
-  [datasource]
-  (hc/close-datasource datasource))
-
-(defn start-env
-  []
-  (Dotenv/load))
+(ig-repl/set-prep! #(ig/expand system/system (ig/deprofile [:dev])))
 
 (comment
-  (start-env)
-  (with-open [pool (start-db)
-              ds (jdbc/get-connection pool)] 
-    (let [rows (jdbc/execute! ds ["SELECT 1 + 3"])]
-      (println rows)))
+  (ig-repl/go)
+  (let [^HikariDataSource ds (:app/datasource ig-state/system)]
+    (.close (jdbc/get-connection ds))
+    (jdbc/execute! ds ["SELECT * FROM plans"]))
   )

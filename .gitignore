@@ -30,3 +30,4 @@
 /target
 /db/password.txt
 /db/flyway.conf
+/resources/secrets.edn

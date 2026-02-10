@@ -1,0 +1,5 @@
+{:secrets #include "secrets.edn"
+ :port 8999
+ :postgres {:username "postgres"
+            :database-name "example"
+            :password #or [#ref [:secrets :pg-password] "postgres"]}}
