@@ -47,7 +47,7 @@
   (if (seq plans)
     (list 
      [:h1 "Plans"]
-     [:ul (map (fn [_] [:li "plan"]))])
+     [:ul (map (fn [plan] [:li (:plans/name plan)]) plans)])
     (list
      [:h1 "Plans"]
      [:p "No current plans"])))

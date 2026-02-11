@@ -13,5 +13,8 @@
   (ig-repl/reset)
   (let [^HikariDataSource ds (:app/datasource ig-state/system)]
     (.close (jdbc/get-connection ds))
-    (sql/query ds ["SELECT * FROM plans"]))
+    (let [plans (sql/query ds ["SELECT * FROM plans"])
+          plan-names (map (fn [plan] (:plans/name plan)) plans)] 
+      (println plans)
+      (println plan-names)))
   )
