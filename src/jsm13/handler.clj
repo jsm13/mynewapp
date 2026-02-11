@@ -7,21 +7,21 @@
    [reitit.ring :as ring]))
 
 (defn layout
-  [body]
+  [body options]
   (h/html 
    (page/doctype :html5) 
    [:html {:lang "en"}
     [:head
      [:meta {:charset "utf-8"}]
-     [:title "Hello world"]]
+     [:title (or (:title options) "NPP")]]
     [:body body]]))
 
 
 ;; Borrowing heavily from 
 ;; https://github.com/prestancedesign/usermanager-reitit-example/blob/main/src/usermanager/handler.clj
 
-(defn make-response [body]
-  (-> (response/response (str (layout body)))
+(defn make-response [{:keys [body options]}]
+  (-> (response/response (str (layout body options)))
       (response/content-type "text/html")))
 
 (defn ensure-response-middleware
@@ -50,18 +50,17 @@
          list-items)]))
 
 (defn plans-list [plans]
-  (if (seq plans)
-    (list 
-     [:h1 "Plans"]
-     (make-list (map (fn [plan] (:plans/name plan)) plans)))
-    (list
-     [:h1 "Plans"]
+  (h/html
+   [:h1 "Plans"]
+   (if (seq plans)
+     (make-list (map (fn [plan] (:plans/name plan)) plans))
      [:p "No current plans"])))
 
 (defn root-route-handler [req]
   (let [db (:db req)
         plans (sql/query db ["SELECT * FROM plans"])]
-    (plans-list plans)))
+    {:body (plans-list plans)
+     :options {:title "Plans"}}))
 
 (defn app
   [db]
@@ -69,4 +68,5 @@
    (ring/router
     [["/" {:handler root-route-handler}]]
     {:data {:db db
-            :middleware [ensure-response-middleware middleware-db]}})))
+            :middleware [ensure-response-middleware
+                         middleware-db]}})))
