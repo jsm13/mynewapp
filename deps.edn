@@ -7,7 +7,9 @@
         aero/aero {:mvn/version "1.1.6"}
         integrant/integrant {:mvn/version "1.0.1"}
         ring/ring-core {:mvn/version "1.15.3"}
-        ring/ring-jetty-adapter {:mvn/version "1.15.3"}}
+        ring/ring-jetty-adapter {:mvn/version "1.15.3"}
+        metosin/reitit {:mvn/version "0.10.0"}
+        hiccup/hiccup {:mvn/version "2.0.0"}}
  :aliases
  {:run-m {:main-opts ["-m" "jsm13.mynewapp"]}
   :run-x {:ns-default jsm13.mynewapp

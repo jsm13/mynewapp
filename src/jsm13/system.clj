@@ -1,21 +1,24 @@
 (ns jsm13.system
-  (:require [ring.util.response :as response]
+  (:require [integrant.core :as ig]
             [jsm13.config :as config]
-            [jsm13.server :as server]
             [jsm13.db :as db]
-            [integrant.core :as ig]))
+            [jsm13.handler :as handler]
+            [jsm13.server :as server]))
 
 
 (def system 
   {:app/config {}
    :app/datasource {:config (ig/ref :app/config)}
    :adapter/jetty {:config (ig/ref :app/config) 
-                   :handler (ig/ref :handler/greet)}
-   :handler/greet {:name "jsm"}})
+                   :handler (ig/ref :app/handler)}
+   :app/handler {:db (ig/ref :app/datasource)}})
 
 (defmethod ig/init-key :app/config [_ _]
   (config/load-config))
 
+;; TODO: config could supply values to the system so dependencies
+;; could be expressed in terms of specific values instead of requiring
+;; and needing to unpack all of config
 (defmethod ig/init-key :app/datasource [_ {:keys [config]}]
   (let [{:keys [postgres]} config
         {:keys [username password database-name]} postgres
@@ -34,8 +37,8 @@
                                (assoc :port (:port config))
                                (assoc :join? false))))
 
-(defmethod ig/init-key :handler/greet [_ {:keys [name]}]
-  (fn [_] (response/response (str "Hello " name))))
+(defmethod ig/init-key :app/handler [_ {:keys [db]}]
+  (handler/app db))
 
 (defmethod ig/halt-key! :adapter/jetty [_ server]
   (.stop server))
