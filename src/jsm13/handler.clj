@@ -43,11 +43,17 @@
                 (fn [req]
                   (handler (assoc req :db db)))))})
 
+(defn make-list [list-items]
+  (h/html
+   [:ul
+    (map (fn [item] [:li item]) 
+         list-items)]))
+
 (defn plans-list [plans]
   (if (seq plans)
     (list 
      [:h1 "Plans"]
-     [:ul (map (fn [plan] [:li (:plans/name plan)]) plans)])
+     (make-list (map (fn [plan] (:plans/name plan)) plans)))
     (list
      [:h1 "Plans"]
      [:p "No current plans"])))
