@@ -2,4 +2,5 @@
  :port 8999
  :postgres {:username "postgres"
             :database-name "example"
+            :host "postgres"
             :password #or [#ref [:secrets :pg-password] "postgres"]}}

@@ -21,8 +21,9 @@
 ;; and needing to unpack all of config
 (defmethod ig/init-key :app/datasource [_ {:keys [config]}]
   (let [{:keys [postgres]} config
-        {:keys [username password database-name]} postgres
+        {:keys [username password database-name host]} postgres
         pool-conf {:dbtype "postgres"
+                   :host host
                    :dbname database-name
                    :username username
                    :password password}]

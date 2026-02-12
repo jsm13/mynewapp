@@ -19,11 +19,14 @@ services:
       timeout: 5s
       retries: 5
   flyway:
-    image: flyway/flyway:12
+    image: redgate/flyway:12
     command: migrate
     volumes:
       - ./db/migrations:/flyway/sql
       - ./db/flyway.conf:/flyway/conf/flyway.conf
+    depends_on:
+      postgres:
+        condition: service_healthy
 volumes:
   db-data:
 secrets:

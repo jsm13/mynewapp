@@ -15,8 +15,10 @@ services:
       context: .
       target: final
     depends_on:
-      postgres:
-        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+    ports:
+      - 8999:8999
     # If your application exposes a port, uncomment the following lines and change
     # the port numbers as needed. The first number is the host port and the second
     # is the port inside the container.
