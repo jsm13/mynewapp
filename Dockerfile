@@ -89,20 +89,20 @@ RUN clojure "-T:build" "uber"
 
 FROM eclipse-temurin:25 AS final
 
-# TODO: create non-privileged user that the app will run under (see above)
-# ARG UID=10001
-# RUN adduser \
-#     --disabled-password \
-#     --gecos "" \
-#     --home "/nonexistent" \
-#     --shell "/sbin/nologin" \
-#     --no-create-home \
-#     --uid "${UID}" \
-#     appuser
-
-# USER appuser
-
 RUN mkdir /opt/app
+
+ARG UID=10001
+RUN adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/nonexistent" \
+    --shell "/sbin/nologin" \
+    --no-create-home \
+    --uid "${UID}" \
+    appuser
+
+USER appuser
+
 COPY --from=build /build/target/net.clojars.jsm13/mynewapp-0.1.0-SNAPSHOT.jar /opt/app/
 
 CMD ["java", "-jar", "/opt/app/mynewapp-0.1.0-SNAPSHOT.jar"]
