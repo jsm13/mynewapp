@@ -27,6 +27,8 @@
                    :dbname database-name
                    :username username
                    :password password}]
+    (println "connecting to db with config")
+    (println pool-conf)
     (db/create-connection-pool pool-conf)))
 
 (defmethod ig/halt-key! :app/datasource [_ connection-pool]
