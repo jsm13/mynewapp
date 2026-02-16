@@ -1,6 +1,6 @@
-{:secrets #include "secrets.edn"
+{:secrets #include "/run/secrets/secrets.edn"
  :port 8999
  :postgres {:username "postgres"
             :database-name "mynewapp"
             :host #or [#env POSTGRES_HOST "localhost"]
-            :password #or [#env POSTGRES_PASSWORD "postgres"]}}
+            :password #or [#ref [:secrets :pg-password] "postgres"]}}
