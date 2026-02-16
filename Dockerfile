@@ -89,6 +89,7 @@ RUN clojure "-T:build" "uber"
 
 FROM eclipse-temurin:25 AS final
 
+RUN apt update && apt install -y curl --no-install-recommends && rm -rf /var/lib/apt/lists/*
 RUN mkdir /opt/app
 
 ARG UID=10001
