@@ -9,7 +9,9 @@
         ring/ring-core {:mvn/version "1.15.3"}
         ring/ring-jetty-adapter {:mvn/version "1.15.3"}
         metosin/reitit {:mvn/version "0.10.0"}
-        hiccup/hiccup {:mvn/version "2.0.0"}}
+        hiccup/hiccup {:mvn/version "2.0.0"}
+        dev.data-star.clojure/sdk {:mvn/version "1.0.0-RC7"}
+        dev.data-star.clojure/ring {:mvn/version "1.0.0-RC7"}}
  :aliases
  {:run-m {:main-opts ["-m" "jsm13.mynewapp"]}
   :run-x {:ns-default jsm13.mynewapp
