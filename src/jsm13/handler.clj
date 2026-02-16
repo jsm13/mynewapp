@@ -13,7 +13,8 @@
    [:html {:lang "en"}
     [:head
      [:meta {:charset "utf-8"}]
-     [:title (or (:title options) "NPP")]]
+     [:title (or (:title options) "NPP")]
+     [:link {:href "/assets/style.css" :rel "stylesheet"}]]
     [:body body]]))
 
 
@@ -66,7 +67,9 @@
   [db]
   (ring/ring-handler
    (ring/router
-    [["/" {:handler root-route-handler}]]
+    [["/" {:handler root-route-handler}]
+     ["/assets/*" (ring/create-resource-handler)]]
     {:data {:db db
             :middleware [ensure-response-middleware
-                         middleware-db]}})))
+                         middleware-db]}})
+   (ring/create-default-handler)))
