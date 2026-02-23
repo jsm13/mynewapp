@@ -2,12 +2,24 @@ name: learn-github-actions
 run-name: ${{ github.actor }} is learning GitHub Actions
 on: [push]
 jobs:
-  check-bats-version:
+  check-clojure-cli-version:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Java
+        uses: actions/setup-java@v5
         with:
-          node-version: 20
-      - run: npm install -g bats
-      - run: bats -v
+          distribution: "temurin" # See 'Supported distributions' for available options
+          java-version: "25"
+      - name: Install Clojure Tools
+        uses: DeLaGuardo/setup-clojure@13.5
+        with:
+          cli: 1.12.4.1602
+          bb: 1.12.215
+
+      # TODO: look at caching clojure tools
+      - name: Get Clojure CLI version
+        run: clj --version
+      - name: Get babashka version
+        run: bb --version
