@@ -18,7 +18,7 @@ jobs:
             -url="${{secrets.DB_URL}}" \
             -user="${{secrets.DB_USER}}" \
             -password="${{secrets.DB_PASSWORD}}" \
-            -locations="filesystem:./sql"
+            -locations="filesystem:./sql" \
             migrate
   run-tests:
     runs-on: ubuntu-latest
