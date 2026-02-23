@@ -23,3 +23,5 @@ jobs:
         run: clojure --version
       - name: Get babashka version
         run: bb --version
+      - name: Run bb ci
+        run: bb ci
