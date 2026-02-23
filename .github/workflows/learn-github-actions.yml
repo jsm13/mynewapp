@@ -46,6 +46,12 @@ jobs:
   publish-image:
     needs: run-tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v6
