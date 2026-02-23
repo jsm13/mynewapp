@@ -1,7 +1,21 @@
-name: learn-github-actions
+name: deploy-app
 run-name: ${{ github.actor }} is learning GitHub Actions
 on: [push]
 jobs:
+  run-migrations:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Run Flyway Migrations with Docker
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/db/migrations:/flyway/sql \
+            flyway/flyway:12 \
+            -url="${{secrets.DB_URL}}" \
+            -user="${{secrets.DB_USER}}" \
+            -password="${{secrets.DB_PASSWORD}}" \
+            migrate
   check-clojure-cli-version:
     runs-on: ubuntu-latest
     steps:
