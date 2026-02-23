@@ -1,6 +1,9 @@
 name: deploy-app
-run-name: ${{ github.actor }} is learning GitHub Actions
+run-name: ${{ github.actor }} is deploying the app
 on: [push]
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 jobs:
   run-migrations:
     runs-on: ubuntu-latest
@@ -15,8 +18,9 @@ jobs:
             -url="${{secrets.DB_URL}}" \
             -user="${{secrets.DB_USER}}" \
             -password="${{secrets.DB_PASSWORD}}" \
+            -locations="filesystem:./sql"
             migrate
-  check-clojure-cli-version:
+  run-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,5 +41,48 @@ jobs:
         run: clojure --version
       - name: Get babashka version
         run: bb --version
-      - name: Run bb ci
+      - name: Run bb test
+        run: bb test
+  publish-image:
+    needs: run-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: "temurin" # See 'Supported distributions' for available options
+          java-version: "25"
+      - name: Install Clojure Tools # TODO: look at caching clojure tools
+        uses: DeLaGuardo/setup-clojure@13.5
+        with:
+          cli: 1.12.4.1602
+          bb: 1.12.215
+      - name: Run bb ci (build uberjar)
         run: bb ci
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: Build and push Docker image
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
