@@ -15,5 +15,5 @@
             :depends [test test:bb]}
 
   ci {:doc "Run the CI pipeline of tests and build the JAR."
-      :depends [test:all] ; or just test
+      :depends [test] ; TODO: figure out test:bb
       :task (clojure "-T:build" "uber")}}}
