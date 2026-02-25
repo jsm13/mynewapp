@@ -83,7 +83,7 @@
    {ds-ring/on-open
     (fn [sse-gen]
       (println (message-area "Hello, datastar"))
-      (d*/patch-elements! sse-gen (str (message-area "Hello, datastar")))
+      (d*/patch-elements! sse-gen (str (message-area "Hello, datastar!!")))
       (Thread/sleep 2000)
       (d*/patch-elements! sse-gen (str (message-area "")))
       (d*/close-sse! sse-gen))}))
