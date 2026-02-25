@@ -41,8 +41,8 @@ jobs:
         run: clojure --version
       - name: Get babashka version
         run: bb --version
-      - name: Run bb test
-        run: bb test
+      - name: Run tests
+        run: clojure -M:test -m cognitect.test-runner
   publish-image:
     needs: run-tests
     runs-on: ubuntu-latest
