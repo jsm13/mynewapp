@@ -19,7 +19,7 @@ services:
       timeout: 5s
       retries: 5
   flyway:
-    image: redgate/flyway:12
+    image: flyway/flyway:12
     command: migrate
     volumes:
       - ./db/migrations:/flyway/sql
