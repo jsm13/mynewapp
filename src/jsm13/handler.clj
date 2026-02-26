@@ -1,12 +1,16 @@
 (ns jsm13.handler 
   (:require
-   [ring.util.response :as response]
-   [hiccup2.core :as h]
    [hiccup.page :as page]
+   [hiccup2.core :as h]
    [next.jdbc.sql :as sql]
-   [starfederation.datastar.clojure.api :as d*]
+   [reitit.ring :as ring]
+   [reitit.ring.middleware.parameters :as parameters-middleware]
+   [ring.middleware.session :as session]
+   [ring.middleware.keyword-params :as keyword-params]
+   [ring.util.request :as request]
+   [ring.util.response :as response] 
    [starfederation.datastar.clojure.adapter.ring :as ds-ring]
-   [reitit.ring :as ring]))
+   [starfederation.datastar.clojure.api :as d*]))
 
 (defn layout
   [body options]
@@ -24,13 +28,10 @@
 ;; Borrowing heavily from 
 ;; https://github.com/prestancedesign/usermanager-reitit-example/blob/main/src/usermanager/handler.clj
 
-(defn make-page-response [{:keys [body options]}]
-  (-> (response/response (str (layout body options)))
+(defn make-page-response [{:keys [body options session]}]
+  (-> (response/response (str (layout body options))) 
+      (assoc :session session)
       (response/content-type "text/html")))
-
-(defn make-patch-response [body]
-  (-> (response/response body)
-      (response/content-type "text/event-stream")))
 
 (defn ensure-response-middleware
   "This middleware runs before and after every request
@@ -71,11 +72,32 @@
      [:p "No current plans"])
    button-area))
 
-(defn root-route-handler [req]
-  (let [db (:db req)
+(defn plans-route-handler [req]
+  (let [{:keys [db session]} req
         plans (sql/query db ["SELECT * FROM plans"])]
+    (println session)
     {:body (plans-list plans)
-     :options {:title "Plans"}}))
+     :options {:title "Plans"}
+     :session {:message "Hello"}}))
+
+(def welcome-page
+  (h/html
+   [:h1 "Welcome"]
+   [:div
+    [:form {:data-on:submit "@post('/login', { contentType: 'form' })"}
+     [:label "Enter a username to continue:"
+      [:input {:type "text" :name "username"}]]]]))
+
+(defn user-greeting-page [username]
+  (h/html
+   [:h1 (str "Welcome " username)]))
+
+(defn root-route-handler [req]
+  (let [{:keys [session]} req
+        username (:username session)]
+    (println session)
+    {:body (if username (user-greeting-page username) welcome-page)
+     :options {:title "Welcome"}}))
 
 (defn datastar-handler [req]
   (ds-ring/->sse-response
@@ -88,14 +110,27 @@
       (d*/patch-elements! sse-gen (str (message-area "")))
       (d*/close-sse! sse-gen))}))
 
+(defn login-route-handler [req]
+  (let [params (:params req)
+        username (:username params)] 
+    (println params) 
+    (println (str "username: " username))
+    {:body (user-greeting-page username)
+     :session {:username username}}))
+
 (defn app
   [db]
   (ring/ring-handler
    (ring/router
     [["/" {:handler root-route-handler}]
+     ["/plans" {:handler plans-route-handler}]
+     ["/login" {:post {:handler login-route-handler}}]
      ["/datastar" {:handler datastar-handler}]
      ["/assets/*" (ring/create-resource-handler)]]
     {:data {:db db
-            :middleware [ensure-response-middleware
+            :middleware [parameters-middleware/parameters-middleware
+                         keyword-params/wrap-keyword-params
+                         ensure-response-middleware
                          middleware-db]}})
-   (ring/create-default-handler)))
+   (ring/create-default-handler)
+   {:middleware [session/wrap-session]}))
