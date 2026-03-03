@@ -17,7 +17,7 @@
   (config/load-config))
 
 ;; TODO: config could supply values to the system so dependencies
-;; could be expressed in terms of specific values instead of requiring
+;; are expressed in terms of specific values instead of requiring
 ;; and needing to unpack all of config
 (defmethod ig/init-key :app/datasource [_ {:keys [config]}]
   (let [{:keys [postgres]} config
@@ -27,8 +27,6 @@
                    :dbname database-name
                    :username username
                    :password password}]
-    (println "connecting to db with config")
-    (println pool-conf)
     (db/create-connection-pool pool-conf)))
 
 (defmethod ig/halt-key! :app/datasource [_ connection-pool]
