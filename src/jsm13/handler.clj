@@ -20,6 +20,7 @@
     [["/" {:handler welcome-controller/show}]
      ["/plans" {:get {:handler plan-controller/index}
                 :post {:handler plan-controller/create}}]
+     ["/plans-live" {:get {:handler plan-controller/index-updates}}]
      ["/plans/:plan-id" {:delete {:handler plan-controller/delete}}]
      ["/login" {:post {:handler session-controller/create}}]
      ["/assets/*" (ring/create-resource-handler)]]

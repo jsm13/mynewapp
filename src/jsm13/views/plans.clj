@@ -25,10 +25,11 @@
    [:ul
     (map list-item plans)]))
 
-(defn plans-index-page [plans]
+(defn plans-index-resource [plans]
   (h/html
-   [:h1 "Plans"]
-   (if (seq plans)
-     (plans-list plans)
-     [:p "No current plans"])
-   form))
+   [:main {:data-init "@get('/plans-live')" :id "main"}
+    [:h1 "Plans"]
+    (if (seq plans)
+      (plans-list plans)
+      [:p "No current plans"])
+    form]))
