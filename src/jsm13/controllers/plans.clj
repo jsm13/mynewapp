@@ -22,8 +22,8 @@
                                          (let [plans (plan-model/find-many db)
                                                plans-resource (str (plan-views/plans-index-resource plans))]
                                            (when-not (Thread/interrupted)
-                                             (d*/patch-elements! sse-gen plans-resource {:patch-mode "inner"})
-                                             (Thread/sleep 500)
+                                             (d*/patch-elements! sse-gen plans-resource)
+                                             (Thread/sleep 250)
                                              (recur)))))
                          dsa/on-close (fn [] (println "SSE Connection closed"))})))
 
