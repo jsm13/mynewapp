@@ -1,4 +1,4 @@
-(ns jsm13.views.plans 
+(ns jsm13.views.plan 
   (:require
    [hiccup2.core :as h]))
 
@@ -13,9 +13,10 @@
 
 (defn list-item [plan]
   (let [{:plans/keys [name id]} plan
-        delete-path (str "/plans/" id)
-        delete-action (str "@delete(\"" delete-path "\")")]
-    (h/html [:li name
+        resource-path (str "/plans/" id)
+        delete-action (str "@delete(\"" resource-path "\")")]
+    (h/html [:li 
+             [:a {:href resource-path} name]
              [:button 
               {:data-on:click delete-action} 
               "x"]])))
@@ -25,11 +26,19 @@
    [:ul
     (map list-item plans)]))
 
-(defn plans-index-resource [plans]
+(defn plan-index-resource [plans]
   (h/html
-   [:main {:data-init "@get('/plans-live')" :id "main"}
+   [:main {:data-init "@get('/plans')" :id "main"}
     [:h1 "Plans"]
     (if (seq plans)
       (plans-list plans)
       [:p "No current plans"])
     form]))
+
+(defn plan-show-resource [plan]
+  (let [{:plans/keys [name id]} plan
+        plan-url (str "/plans/" id)
+        get-plan-action (str "@get('" plan-url "')")]
+    (h/html
+     [:main {:id "main" :data-init get-plan-action}
+      [:h1 name]])))

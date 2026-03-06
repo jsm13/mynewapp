@@ -6,7 +6,7 @@
    [ring.middleware.keyword-params :as keyword-params]
    [jsm13.controllers.welcome :as welcome-controller]
    [jsm13.controllers.session :as session-controller]
-   [jsm13.controllers.plans :as plan-controller]
+   [jsm13.controllers.plan :as plan-controller]
    [jsm13.middleware :as middleware]))
 
 
@@ -20,8 +20,8 @@
     [["/" {:handler welcome-controller/show}]
      ["/plans" {:get {:handler plan-controller/index}
                 :post {:handler plan-controller/create}}]
-     ["/plans-live" {:get {:handler plan-controller/index-updates}}]
-     ["/plans/:plan-id" {:delete {:handler plan-controller/delete}}]
+     ["/plans/:plan-id" {:get {:handler plan-controller/show}
+                         :delete {:handler plan-controller/delete}}]
      ["/login" {:post {:handler session-controller/create}}]
      ["/assets/*" (ring/create-resource-handler)]]
     {:data {:db db
