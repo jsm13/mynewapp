@@ -1,0 +1,7 @@
+CREATE TABLE threads (
+  id UUID PRIMARY KEY DEFAULT uuidv7(),
+  brand TEXT,
+  lot_no TEXT,
+  color_name TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
