@@ -1,0 +1,6 @@
+CREATE TABLE sections (
+  id UUID PRIMARY KEY DEFAULT uuidv7(),
+  plan_id UUID REFERENCES plans,
+  description TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
