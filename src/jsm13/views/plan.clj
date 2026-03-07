@@ -1,6 +1,7 @@
 (ns jsm13.views.plan 
   (:require
-   [hiccup2.core :as h]))
+   [hiccup2.core :as h]
+   [starfederation.datastar.clojure.api :as dsapi]))
 
 (def form
   (h/html
@@ -36,9 +37,10 @@
     form]))
 
 (defn plan-show-resource [plan]
-  (let [{:plans/keys [name id]} plan
-        plan-url (str "/plans/" id)
-        get-plan-action (str "@get('" plan-url "')")]
+  (let [{:keys [name id sections]} plan
+        plan-url (str "/plans/" id)]
     (h/html
-     [:main {:id "main" :data-init get-plan-action}
-      [:h1 name]])))
+     [:main {:id "main" :data-init (dsapi/sse-get plan-url)}
+      [:h1 name]
+      [:ul (map (fn [{:keys [id description]}]
+                  [:li (str description " (" id ")")]) sections)]])))
