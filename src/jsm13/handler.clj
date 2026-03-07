@@ -7,6 +7,7 @@
    [jsm13.controllers.welcome :as welcome-controller]
    [jsm13.controllers.session :as session-controller]
    [jsm13.controllers.plan :as plan-controller]
+   [jsm13.controllers.section :as section-conroller]
    [jsm13.middleware :as middleware]))
 
 
@@ -22,6 +23,8 @@
                 :post {:handler plan-controller/create}}]
      ["/plans/:plan-id" {:get {:handler plan-controller/show}
                          :delete {:handler plan-controller/delete}}]
+     ["/plans/:plan-id/sections" {:post {:handler section-conroller/create}}]
+     ["/sections/:section-id" {:delete {:handler section-conroller/delete}}]
      ["/login" {:post {:handler session-controller/create}}]
      ["/assets/*" (ring/create-resource-handler)]]
     {:data {:db db
