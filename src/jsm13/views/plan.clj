@@ -38,9 +38,22 @@
 
 (defn plan-show-resource [plan]
   (let [{:keys [name id sections]} plan
-        plan-url (str "/plans/" id)]
+        plan-url (str "/plans/" id)
+        plan-section-url (str plan-url "/sections")]
     (h/html
      [:main {:id "main" :data-init (dsapi/sse-get plan-url)}
       [:h1 name]
-      [:ul (map (fn [{:keys [id description]}]
-                  [:li (str description " (" id ")")]) sections)]])))
+      [:ul (map 
+            (fn [{:keys [id description]}]
+              (let [section-url (str "/sections/" id)]
+                [:li description
+                 [:button {:data-on:click (dsapi/sse-delete section-url)} "x"]])) 
+            sections)]
+      [:div
+       [:h2 "Add section"]
+       [:form {:data-on:submit (dsapi/sse-post plan-section-url "{contentType: 'form'}")}
+        [:label "Description"
+         [:input {:type "text "
+                  :name "description"
+                  :required true}]]
+        [:button "Submit"]]]])))
