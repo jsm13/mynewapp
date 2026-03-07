@@ -35,13 +35,13 @@
         {:keys [plan-id]} path-params
         is-ds-req (is-datastar-req req)]
     (if-not is-ds-req
-      (let [plan (plan-model/find-by-id db plan-id)
+      (let [plan (plan-model/find-by-id-with-sections db plan-id)
             plans-show-resource (plan-views/plan-show-resource plan)]
         {:body plans-show-resource
          :options {:title (:plans/name plan)}})
       (dsa/->sse-response req {dsa/on-open (fn [sse-gen]
                                              (loop []
-                                               (let [plan (plan-model/find-by-id db plan-id)
+                                               (let [plan (plan-model/find-by-id-with-sections db plan-id)
                                                      plan-show-resource (str (plan-views/plan-show-resource plan))]
                                                  (when-not (Thread/interrupted)
                                                    (d*/patch-elements! sse-gen plan-show-resource)
