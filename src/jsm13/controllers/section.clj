@@ -12,6 +12,8 @@
 (defn create [req]
   (let [{:keys [db path-params params]} req
         {:keys [plan-id]} path-params
-        {:keys [description]} params]
-    (section-model/create-plan-section db plan-id description)
-    (resp/status 201)))
+        {:keys [description]} params
+        new-section (section-model/create-plan-section db plan-id description)] 
+    (-> (resp/response (str "Created section " (:sections/id new-section)))
+        (resp/header "datastar-selector" "#new-section-form")
+        (resp/header "Content-Type" "text/html"))))

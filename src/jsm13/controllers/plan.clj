@@ -21,6 +21,7 @@
          :options {:title "Plans"}
          :session {:message "Hello"}})
       (dsa/->sse-response req {dsa/on-open (fn [sse-gen]
+                                             (println "Open SSE stream for plan index")
                                              (loop []
                                                (let [plans (plan-model/find-many db)
                                                      plans-resource (str (plan-views/plan-index-resource plans))]
@@ -52,10 +53,12 @@
 (defn create [req]
   (let [{:keys [params db]} req
         {:keys [name]} params
-        result (plan-model/create db name)]
+        plan (plan-model/create db name)]
     (println "Plan created")
-    (println result)
-    (resp/redirect "/plans" :see-other)))
+    (println plan)
+    (-> (resp/response (str "Plan " (:plans/id plan) " created"))
+        (resp/header "datastar-selector" "#new-plan-form")
+        (resp/header "Content-Type" "text/html"))))
 
 (defn delete [req]
   (let [{:keys [path-params db]} req
