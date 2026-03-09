@@ -16,8 +16,8 @@
   (def developing-plan-id "019cb76a-5d4a-749e-8152-4cd02bd289bc")
   (def plan
     (plan-model/find-by-id-with-sections db developing-plan-id))
-  (section-model/create-plan-section db developing-plan-id "Tidy up step")
-  (section-model/delete db "019cc506-00e9-729a-b1fc-77122c1a8938")
+  (section-model/create-plan-section db developing-plan-id "Final step")
+  (section-model/delete db "019cc608-0e7a-7952-9546-6ad581573842")
   plan
   (ig-repl/reset)
   )

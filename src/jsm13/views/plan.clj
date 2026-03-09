@@ -5,12 +5,15 @@
 
 (def form
   (h/html
-   [:form {:data-on:submit "@post('/plans', {contentType: 'form'})"
-           :data-on:datastar-fetch "evt.detail.type === 'finished' && el.reset()"}
+   [:form {:id "new-plan-form"
+           :data-on:submit "@post('/plans', {contentType: 'form'})"
+           :data-indicator "fetching"}
     [:h2 "New plan form"]
     [:label "Name:"
      [:input {:type "text" :name "name" :required true}]]
-    [:button "Submit"]]))
+    [:button "Submit"]
+    [:div {:data-show "$fetching"}
+     [:p "Loading..."]]]))
 
 (defn list-item [plan]
   (let [{:plans/keys [name id]} plan
@@ -51,7 +54,8 @@
             sections)]
       [:div
        [:h2 "Add section"]
-       [:form {:data-on:submit (dsapi/sse-post plan-section-url "{contentType: 'form'}")}
+       [:form {:id "new-section-form"
+               :data-on:submit (dsapi/sse-post plan-section-url "{contentType: 'form'}")}
         [:label "Description"
          [:input {:type "text "
                   :name "description"
