@@ -24,7 +24,20 @@
          :src-dirs ["src"]
          :ns-compile [main])))
 
+(defn- has-uncommitted-changes? [dir]
+  (let [{:keys [exit out err]} (sh/sh "git" "status" "--porcelain" dir)]
+    (if (zero? exit)
+      (not (clojure.string/blank? out))
+      (throw (ex-info (str "Git status check failed: " err) {:exit exit})))))
+
+(defn- check-no-uncommitted-changes! [dir]
+  (when (has-uncommitted-changes? dir)
+    (throw (ex-info (str "Cannot build. Uncommitted changes found in " dir "\n"
+                         "Please commit or stash your changes first.")
+                    {:uncommitted-changes true}))))
+
 (defn uber "Build the uberjar." [opts]
+  (check-no-uncommitted-changes! "src")
   (b/delete {:path "target"})
   (let [opts (uber-opts opts)]
     (println "\nCopying source...")
